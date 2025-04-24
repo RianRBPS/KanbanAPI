@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: kanban_sql
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Strong@123
+    ports:
+      - "1433:1433"
+    networks:
+      - kanban-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kanban_api
+    depends_on:
+      - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5000:80"
+    networks:
+      - kanban-network
+
+networks:
+  kanban-network:
